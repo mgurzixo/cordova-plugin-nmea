@@ -1,0 +1,33 @@
+{
+  "name": "net.kyosho.nmea",
+  "version": "0.0.1",
+  "description": "cordova plugin for NMEA Listener",
+  "cordova": {
+    "id": "net.kyosho.nmea",
+    "platforms": []
+  },
+  "engines": {
+    "cordovaDependencies": {
+      "1.0.2": {
+        "cordova-android": ">=7.0.0"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyosho-/cordova-plugin-nmea.git"
+  },
+  "keywords": [
+    "cordova",
+    "gps",
+    "nmea",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Akira Kurosawa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kyosho-/cordova-plugin-nmea/issues"
+  },
+  "homepage": "https://github.com/kyosho-/cordova-plugin-nmea#readme"
+}

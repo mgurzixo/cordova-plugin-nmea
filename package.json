@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-nmea",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "cordova plugin for NMEA Listener",
   "cordova": {
     "id": "cordova-plugin-nmea",

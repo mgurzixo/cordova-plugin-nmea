@@ -1,14 +1,16 @@
 {
-  "name": "net.kyosho.nmea",
-  "version": "0.0.1",
+  "name": "cordova-plugin-nmea",
+  "version": "0.0.0",
   "description": "cordova plugin for NMEA Listener",
   "cordova": {
-    "id": "net.kyosho.nmea",
-    "platforms": []
+    "id": "cordova-plugin-nmea",
+    "platforms": [
+      "android"
+    ]
   },
   "engines": {
     "cordovaDependencies": {
-      "1.0.2": {
+      "0.0.1": {
         "cordova-android": ">=7.0.0"
       }
     }

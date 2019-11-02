@@ -1,5 +1,9 @@
 var exec = require('cordova/exec');
 
-exports.coolMethod = function (arg0, success, error) {
-    exec(success, error, 'Nmea', 'coolMethod', [arg0]);
+exports.watch = function (success, error) {
+    exec(success, error, 'Nmea', 'watch', []);
+};
+
+exports.clearWatch = function (success, error) {
+    exec(success, error, 'Nmea', 'clearWatch', []);
 };

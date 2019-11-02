@@ -10,7 +10,7 @@
   },
   "engines": {
     "cordovaDependencies": {
-      "0.0.1": {
+      "1.0.0": {
         "cordova-android": ">=7.0.0"
       }
     }

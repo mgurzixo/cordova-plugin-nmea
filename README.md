@@ -11,7 +11,7 @@ cordova plugin for NMEA Listener
 ## Install
 
 ```
-$ cordova pluguin add cordova-plugin-nmea
+$ cordova plugin add cordova-plugin-nmea
 ```
 
 ## Usage

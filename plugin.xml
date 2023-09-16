@@ -6,7 +6,7 @@
     <name>cordova-plugin-nmea</name>
 
     <js-module name="cordova-plugin-nmea" src="www/nmea.js">
-        <clobbers target="cordova.plugins.nmea" />
+        <clobbers target="navigator.nmea" />
     </js-module>
 
     <platform name="android">

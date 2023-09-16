@@ -1,9 +1,13 @@
-var exec = require('cordova/exec');
+var exec = require("cordova/exec");
 
-exports.watch = function (success, error) {
-    exec(success, error, 'Nmea', 'watch', []);
+var nmea = {
+    watch: function (success, error) {
+        exec(success, error, "Nmea", "watch", []);
+    },
+
+    clearWatch: function (success, error) {
+        exec(success, error, "Nmea", "clearWatch", []);
+    },
 };
 
-exports.clearWatch = function (success, error) {
-    exec(success, error, 'Nmea', 'clearWatch', []);
-};
+module.exports = nmea;

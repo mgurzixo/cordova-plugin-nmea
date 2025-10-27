@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -87,6 +88,16 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
    */
   private void watch(final CallbackContext callbackContext) {
     cordova.getThreadPool().execute(() -> {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+        PluginResult pluginResult = new PluginResult(
+          PluginResult.Status.ERROR,
+          "NMEA watch requires Android API 24 or higher"
+        );
+        pluginResult.setKeepCallback(false);
+        callbackContext.sendPluginResult(pluginResult);
+        return;
+      }
+
       if (null != callback) {
         clearWatch();
       }
@@ -176,9 +187,17 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
       return;
     }
 
+    if (grantResults == null || grantResults.length != permissions.length) {
+      PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, "Grant results mismatch.");
+      pluginResult.setKeepCallback(false);
+      callback.sendPluginResult(pluginResult);
+      callback = null;
+      return;
+    }
+
     boolean hasPermissions = true;
-    for (String permission : permissions) {
-      if (!this.cordova.hasPermission(permission)) {
+    for (int i = 0; i < permissions.length; i++) {
+      if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
         hasPermissions = false;
         break;
       }

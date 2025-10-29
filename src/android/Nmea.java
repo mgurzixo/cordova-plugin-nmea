@@ -103,7 +103,12 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
       }
 
       callback = callbackContext;
-      cordova.requestPermission(Nmea.this, REQUEST_CODE_WATCH, Manifest.permission.ACCESS_FINE_LOCATION);
+
+      if (cordova.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+        tryStartWatch();
+      } else {
+        cordova.requestPermission(Nmea.this, REQUEST_CODE_WATCH, Manifest.permission.ACCESS_FINE_LOCATION);
+      }
     });
   }
 
@@ -213,13 +218,7 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
     }
 
     if (requestCode == REQUEST_CODE_WATCH) {
-      this.watch();
-      JSONObject jsonObject = new JSONObject();
-      jsonObject.put("id", "watch");
-      // Callback with result.
-      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-      pluginResult.setKeepCallback(true);
-      callback.sendPluginResult(pluginResult);
+      tryStartWatch();
     } else {
       // Callback with result.
       PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, "Unsupported operation.");
@@ -312,5 +311,28 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
   @Override
   public void onProviderDisabled(String provider) {
     // Log.d(TAG, "onProviderDisabled");
+  }
+
+  private void tryStartWatch() {
+    if (callback == null) {
+      return;
+    }
+
+    try {
+      this.watch();
+
+      JSONObject jsonObject = new JSONObject();
+      jsonObject.put("id", "watch");
+      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+      pluginResult.setKeepCallback(true);
+      callback.sendPluginResult(pluginResult);
+    } catch (SecurityException | JSONException ex) {
+      Log.e(TAG, ex.getMessage(), ex);
+
+      PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, ex.getMessage());
+      pluginResult.setKeepCallback(false);
+      callback.sendPluginResult(pluginResult);
+      callback = null;
+    }
   }
 }

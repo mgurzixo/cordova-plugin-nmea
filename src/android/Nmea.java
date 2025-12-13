@@ -116,9 +116,13 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
    * start watching
    */
   @SuppressLint("MissingPermission")
-  private void watch() {
+  private void startWatchInternal() {
     if (null == locationManager) {
       locationManager = (LocationManager) this.cordova.getActivity().getSystemService(Context.LOCATION_SERVICE);
+    }
+
+    if (locationManager.getProvider(LocationManager.GPS_PROVIDER) == null || !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+      throw new IllegalStateException("GPS provider is unavailable.");
     }
 
     locationManager.addNmeaListener(this);
@@ -161,9 +165,7 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
       locationManager.removeUpdates(this);
     }
 
-    if (null != callback) {
-      callback = null;
-    }
+    callback = null;
   }
 
   /**
@@ -313,26 +315,37 @@ public class Nmea extends CordovaPlugin implements OnNmeaMessageListener, Locati
     // Log.d(TAG, "onProviderDisabled");
   }
 
-  private void tryStartWatch() {
-    if (callback == null) {
-      return;
+    private void tryStartWatch() {
+        if (callback == null) {
+            return;
+        }
+
+        final CallbackContext localCallback = callback;
+        Runnable startWatchRunnable = () -> {
+          if (callback == null || callback != localCallback) {
+            return;
+          }
+
+          try {
+            startWatchInternal();
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", "watch");
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+            pluginResult.setKeepCallback(true);
+            localCallback.sendPluginResult(pluginResult);
+          } catch (SecurityException | JSONException | IllegalStateException | IllegalArgumentException ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, ex.getMessage());
+            pluginResult.setKeepCallback(false);
+            localCallback.sendPluginResult(pluginResult);
+            if (callback == localCallback) {
+              callback = null;
+            }
+          }
+        };
+
+        this.cordova.getActivity().runOnUiThread(startWatchRunnable);
     }
-
-    try {
-      this.watch();
-
-      JSONObject jsonObject = new JSONObject();
-      jsonObject.put("id", "watch");
-      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-      pluginResult.setKeepCallback(true);
-      callback.sendPluginResult(pluginResult);
-    } catch (SecurityException | JSONException ex) {
-      Log.e(TAG, ex.getMessage(), ex);
-
-      PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR, ex.getMessage());
-      pluginResult.setKeepCallback(false);
-      callback.sendPluginResult(pluginResult);
-      callback = null;
-    }
-  }
 }
